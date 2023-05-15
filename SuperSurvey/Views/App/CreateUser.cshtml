@@ -1,0 +1,107 @@
+﻿
+@{
+    ViewBag.Title = "CreateUser";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+}
+
+@model SuperSurvey.Models.UserRegisterModels
+@using (Html.BeginForm("CreateUser", "App"))
+{
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <strong>Create User</strong>
+        </div>
+        <div class="panel-body">
+            @Html.ValidationSummary()
+            @Html.HiddenFor(m => m.UserID)
+            @Html.HiddenFor(m => m.ORG_ID)
+            <div class="pmbb-edit" id="conedit">
+                <dl class="dl-horizontal">
+                    <dt class="p-t-10">Name</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Email</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Mobile No 1</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.TextBoxFor(m => m.MobileNo1, new { @class = "form-control" })
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Mobile No 2</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.TextBoxFor(m => m.MobileNo2, new { @class = "form-control" })
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">User Name</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.TextBoxFor(m => m.User_Name, new { @class = "form-control" })
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Password</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.TextBoxFor(m => m.Password, new { @class = "form-control" })
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Address</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+                        </div>
+                    </dd>
+                   
+
+                </dl>
+
+                <button type="submit" class="btn btn-primary btn-block" value="Submit">Submit</button>
+
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(".menu2").removeClass("active").removeClass("toggled");
+    $(".menu1").addClass("active").addClass("toggled");
+    function askP() {
+        var Ret = false;
+        swal({
+            title: "Are you sure?",
+            text: "",
+
+            showCancelButton: true,
+            confirmButtonClass: "btn-danger",
+            confirmButtonText: "Yes, delete it!",
+            cancelButtonText: "No, cancel plx!",
+            closeOnConfirm: true,
+            closeOnCancel: true
+        },
+  function (isConfirm) {
+      if (isConfirm) {
+          Ret = true;
+          // return true;
+      } else {
+          Ret = false;
+          // return false;
+      }
+  });
+        alert(Ret)
+        return Ret;
+       
+    }
+</script>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

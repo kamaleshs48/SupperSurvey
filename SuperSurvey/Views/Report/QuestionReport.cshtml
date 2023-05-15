@@ -1,0 +1,110 @@
+﻿
+@{
+    ViewBag.Title = "QuestionReport";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    int Index = 1;
+}
+
+<script>
+    $(".menu1").removeClass("active").removeClass("toggled");
+    $(".menu2").addClass("active").addClass("toggled");
+</script>
+@model SuperSurvey.Models.QuestionReportModels
+@using (Html.BeginForm("QuestionReport", "report"))
+{
+    <div style="min-height:500px;max-height:600px;overflow-y:scroll;overflow-x:hidden ">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <strong>Question Report</strong>
+                <div class="panel-title pull-right">
+                    <a href="@Url.Action("DashBoard","App")" class="">X</a>
+                </div>
+            </div>
+            <div class="panel-body">
+
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+                        <div class="col-md-2">Survey Name</div>
+
+                        <div class="col-md-6">
+
+                            @Html.DropDownListFor(m => m.SurveyID, Model.SurveyList, new { @class = "form-control" })
+                        </div>
+                        <div class="col-md-4">
+                            &nbsp;
+                        </div>
+                    </div>
+
+
+
+                </div>
+                <br />
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+                        <div class="col-md-2">Question Name</div>
+
+                        <div class="col-md-6">
+
+                            @Html.DropDownListFor(m => m.QuestionID, Model.QuestionListForSelection, new { @class = "form-control" })
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+                <br />
+                <br />
+                <br />
+                <div class="row">
+                    <table class="table table-bordered">
+                        <tr style="background-color:#4285F4;color:white;">
+                            <th>S.No</th>
+                            <th>Question.</th>
+                            <th>Options</th>
+                            <th>Total Count</th>
+
+                        </tr>
+
+                        @foreach (var l in Model.QuestionList)
+                {
+                            <tr>
+                                <th>@Index</th>
+                                <th>@l.QuestionText</th>
+                                <th>@l.QuestionType</th>
+                                <td></td>
+                            </tr>
+
+                            foreach (var j in l.OptionList)
+                            {
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>@j.OptionText</td>
+                                    <td>@j.OptionCount </td>
+
+                                </tr>
+                            }
+
+                            Index++;
+                        }
+                    </table>
+                </div>
+
+
+            </div>
+            <div class="panel-footer">
+                <br />
+            </div>
+        </div>
+    </div>
+}

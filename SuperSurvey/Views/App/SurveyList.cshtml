@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewBag.Title = "SurveyList";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    int Index = 1;
+}
+
+
+<script>
+    $(".menu2").removeClass("active").removeClass("toggled");
+    $(".menu1").addClass("active").addClass("toggled");
+</script>
+
+@model SuperSurvey.Models.SurveyMasterModels
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <strong>Survey Name List</strong>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <table class="table table-bordered">
+                <tr>
+                    <th>S.No.</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Survey Type</th>
+                    <th>Survey For</th>
+                    <th>Action</th>
+
+                </tr>
+
+                @foreach (var l in Model._SurveyList)
+                {
+                    <tr>
+                        <td>@Index</td>
+                        <td>@l.Name</td>
+                        <td>@l.Description</td>
+                        <td>@l.SurveyType</td>
+                        <td>@l.SurveyFor</td>
+                        <td>
+                            <a href="@Url.Action("CreateSurvey","App",new {@ID = l.SurveyID })" class="btn btn-primary btn-sm">Edit</a>
+                            <a href="@Url.Action("EditSurvey","App",new {@ID = l.SurveyID })" class="btn btn-info btn-sm">Change Order</a>
+                            <a href="@Url.Action("SurveyAssign","App",new {@ID = l.SurveyID })" class="btn btn-danger btn-sm">Assign to User</a>
+                        </td>
+
+                    </tr>
+                    Index += 1;
+                }
+
+
+            </table>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <a href="@Url.Action("CreateSurvey","App")" class="btn btn-primary">Add New</a>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+﻿
+@{
+    ViewBag.Title = "FullDetails";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    int Index = 1;
+}
+@model IEnumerable<SuperSurvey.Models.ReportDataModels>
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <strong>Survey Report Full Details</strong>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-3"><b>Survey Name:</b> </div>
+            <div class="col-md-3">@ViewBag.SurveyName</div>
+            <div class="col-md-3"><b>Party Name:</b></div>
+            <div class="col-md-3">@ViewBag.PartyName</div>
+        </div>
+        <br />
+        <div class="row" style="overflow:scroll">
+            <table class="table table-bordered" >
+                <tr>
+                    <th>SR.N.</th>
+                    <th> User Name</th>
+                    <th> LokSabha Name</th>
+                    <th> Vidhansabha Name</th>
+                    <th> Ward Block</th>
+                    <th> Area</th>
+                    <th> OtherArea</th>
+                    <th> GPSCoordinate</th>
+                    <th> Survey Date</th>
+                    <th> Post Date</th>
+
+                </tr>
+
+                @foreach (var l in Model)
+                {
+                    <tr>
+                        <td>@Index</td>
+                        <td>@l.User_Name</td>
+                        <td>@l.LokSabhaName</td>
+                        <td>@l.Vidhansabha_Name</td>
+                        <td>@l.Ward_Block</td>
+                        <td>@l.Area</td>
+                        <td>@l.OtherArea</td>
+                        <td>@l.GPSCoordinate</td>
+                        <td>@l.Survey_Date</td>
+                        <td>@l.Post_Date</td>
+
+
+                    </tr>
+                    Index += 1;
+                }
+            </table>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <br />
+    </div>
+</div>

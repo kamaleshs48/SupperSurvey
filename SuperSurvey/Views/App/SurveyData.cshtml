@@ -1,0 +1,116 @@
+﻿@model IEnumerable<SuperSurvey.Models.ReportDataModels>
+@{
+    ViewBag.Title = "SurveyData";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    WebGrid grid = new WebGrid(Model);
+}
+<style>
+   
+</style>
+
+
+@*<script src="~/Scripts/jquery-1.7.1.min.js"></script>*@
+
+<script type="text/javascript">
+
+    var pageIndex = 1;
+    var pageCount;
+
+    $(function ($) {
+        $('#dvGrid').bind('scroll', function () {
+            if ($(this).scrollTop() + $(this).innerHeight() >= this.scrollHeight) {
+                GetRecords();
+            }
+        })
+    });
+
+
+    //Function to make AJAX call to the Jsonresult
+    function GetRecords() {
+        debugger;
+        pageIndex++;
+        if (pageIndex == 2 || pageIndex <= pageCount) {
+
+            //Show Loader
+            if ($("[id$=Grid1] .loader").length == 0) {
+                var row = $("[id$=Grid1] tr").eq(0).clone(true);
+                row.addClass("loader");
+                row.children().remove();
+                row.append('<td colspan = "999" style = "background-color:white"><img id="loader" alt="" src="/Content/img/103.gif" /></td>');
+                $("[id$=Grid1]").append(row);
+            }
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("GetSurveyData", "app")',
+                data: '{pageIndex: ' + pageIndex + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    alert(response.d);
+                },
+                error: function (response) {
+                    alert(response.d);
+                }
+            });
+        }
+    }
+
+    function OnSuccess(response) {
+        $("[id$=Grid1] .loader").remove();
+        $.each(response, function (j, dataval) {
+            $("#Grid1").append('<tr><td>' + dataval.RowNumber + '</td> <td>' + dataval.User_Name + ' </td>'
+
+                + '<td>' + dataval.Survey_Name + ' </td>' +
+                '<td>' + dataval.Party_Name + ' </td>'+
+                '<td>' + dataval.LokSabhaName + ' </td>' +
+                '<td>' + dataval.Vidhansabha_Name + ' </td>' +
+                '<td>' + dataval.Area + ' </td>' +
+                '<td>' + dataval.OtherArea + ' </td>' +
+                '<td>' + dataval.GPSCoordinate + ' </td>' +
+                '<td>' + dataval.Survey_Date + ' </td>' +
+                '<td>' + dataval.Post_Date + ' </td>' +
+                 '<td>' + dataval.Street + ' </td>' +
+                '</tr>');
+
+            // here we are adding option for States
+            pageCount = dataval.PageCount;
+        });
+
+        //Hide Loader
+        $("#loader").hide();
+    }
+
+</script>
+
+<h2>Survey Data</h2>
+
+
+<div id="dvGrid" style="height: 300px; overflow: scroll;">
+
+    @grid.GetHtml(
+    htmlAttributes: new { id = "Grid1" },
+    tableStyle: "table", // applying style on grid
+    fillEmptyRows: false,
+    //show empty row when there is only one record on page to it will display all empty rows there.
+    headerStyle: "header", //applying style.
+    columns: new[]  // colums in grid
+    {
+        grid.Column("RowNumber","RowNumber"), //the model fields to display
+        grid.Column("User_Name","User Name"  ),
+        grid.Column("Survey_Name","Survey Name"),
+        grid.Column("Party_Name","Party Name"),
+        grid.Column("LokSabhaName","LokSabha Name"),
+        grid.Column("Vidhansabha_Name","Vidhansabha_Name"),
+        grid.Column("Ward_Block","Ward_Block"),
+        grid.Column("Area","Area"),
+        grid.Column("OtherArea","OtherArea"),
+        grid.Column("GPSCoordinate","GPSCoordinate"),
+        grid.Column("Survey_Date","Survey_Date"),
+        grid.Column("Post_Date","Post_Date"),
+        grid.Column("Street","Street"),
+   })
+
+</div>
+
+

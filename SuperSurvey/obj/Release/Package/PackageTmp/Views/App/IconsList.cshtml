@@ -1,0 +1,51 @@
+﻿
+@{
+    ViewBag.Title = "IconsList";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    int Index = 1;
+}
+@model  SuperSurvey.Models. IconsModels
+
+
+<script>
+     
+    $(".menu1").removeClass("active").removeClass("toggled");
+    $(".menu2").addClass("active").addClass("toggled");
+
+</script>
+
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <strong>List</strong>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <table class="table table-bordered">
+                <tr>
+                    <th>S.No.</th>
+                    <th>Image Name</th>
+                    <th>Image Path</th>
+                   <th>Images</th>
+                </tr>
+
+                @foreach (var l in Model._List)
+                {
+                    <tr>
+                        <td>@Index</td>
+                        <td>@l.ImageName </td>
+                        <td>@l.ImagePath</td>
+                       <td><img src="@l.ImagePath" width="50" height="50" /></td>
+                    </tr>
+                    Index += 1;
+                }
+
+
+            </table>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <a href="@Url.Action("UploadIcons","App")" class="btn btn-primary">Upload New Image</a>
+    </div>
+</div>
+
+

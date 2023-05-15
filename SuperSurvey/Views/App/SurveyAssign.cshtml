@@ -1,0 +1,179 @@
+﻿
+
+@{
+    ViewBag.Title = "SurveyAssign";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    int Index = 0;
+}
+<script>
+    $(".menu2").removeClass("active").removeClass("toggled");
+    $(".menu1").addClass("active").addClass("toggled");
+    function BindLokSabha(s) {
+
+        if (s.value != "") {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                url: '@Url.Action("GetLoksabhaList", "api")',
+                data: { "UserID": 1, "StateID": s.value },
+                dataType: "json",
+                beforeSend: function () {
+                    //alert(id);
+
+                },
+                success: function (data) {
+
+                    var items = "<option value=''>--Select--</option>";
+                    $.each(data, function (i, x) {
+                        items += "<option value='" + x.Value + "'>" + x.Text + "</option>";
+                    });
+                    // Fill City Dropdown list
+                    $('#Loksabha_ID').html(items);
+                },
+                error: function (result) {
+                    alert('Service call failed: ' + result.status + ' Type :' + result.statusText);
+                }
+            });
+        }
+        else {
+            var items = '<option value="">--Select--</option>';
+            $('#Loksabha_ID').html(items);
+        }
+
+
+
+
+    }
+    function BindVidhanSabha(s) {
+        if (s.value != "") {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                url: '@Url.Action("GetVidhansabhaList", "api")',
+                data: { "UserID": 1, "Loksabha_ID": s.value },
+                dataType: "json",
+                beforeSend: function () {
+                    //alert(id);
+
+                },
+                success: function (data) {
+
+                    var items = "<option value=''>--Select--</option>";
+                    $.each(data, function (i, x) {
+                        items += "<option value='" + x.Value + "'>" + x.Text + "</option>";
+                    });
+                    // Fill City Dropdown list
+                    $('#Vidhansabha_ID').html(items);
+                },
+                error: function (result) {
+                    alert('Service call failed: ' + result.status + ' Type :' + result.statusText);
+                }
+            });
+        }
+        else {
+            var items = '<option value="">--Select--</option>';
+            $('#Vidhansabha_ID').html(items);
+        }
+
+    }
+</script>
+
+
+
+@model SuperSurvey.Models.SurveyAssingModels
+@using (Html.BeginForm("SurveyAssign", "App"))
+{
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <strong>SurveyAssign</strong>
+        </div>
+        <div class="panel-body">
+            @Html.ValidationSummary()
+            @Html.HiddenFor(m => m.ORG_ID)
+            <div class="pmbb-edit" id="conedit">
+                <dl class="dl-horizontal">
+                    <dt class="p-t-10">Survey Name</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.DropDownListFor(m => m.SurveyID, Model.SurveyList, "--Select--", new { @class = "form-control" })
+
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">State Name</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.DropDownListFor(m => m.StateID, Model.StateList, "--Select--", new { @class = "form-control", @onchange = "BindLokSabha(this)" })
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Loksabha Name</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.DropDownListFor(m => m.Loksabha_ID, Model.LoksabhaList, "--Select--", new { @class = "form-control", @onchange = "BindVidhanSabha(this)" })
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Vidhansabha Name</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.DropDownListFor(m => m.Vidhansabha_ID, Model.VidhansabhaList, "--Select--", new { @class = "form-control" })
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Max Limit</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.TextBoxFor(m => m.MaxLimit, new { @class = "form-control", @onkeypress = "return isNumber(event)", @maxlength = "5" })
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Exp Date</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.TextBoxFor(m => m.ExpDate, new { @class = "form-control", @placeholder = "dd/mm/yyyy" })
+                        </div>
+                    </dd>
+                </dl>
+                <div class="row">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Mobile No</th>
+                            <th>User Name</th>
+                            <th>Password</th>
+                            <th>Action</th>
+
+                        </tr>
+
+                        @foreach (var l in Model.UserList)
+                        {
+
+                            <tr>
+                                <td>
+                                    @Html.CheckBoxFor(chk => chk.UserList[Index].IsChecked, new { Style = "vertical- align:3px}" })
+                                    @Html.HiddenFor(chk => chk.UserList[Index].UserID)
+
+
+                                </td>
+                                <td>@l.Name</td>
+                                <td>@l.Email  </td>
+                                <td>@l.MobileNo1</td>
+                                <td>@l.User_Name</td>
+                                <td>@l.Password</td>
+                                <td></td>
+
+                            </tr>
+                            Index += 1;
+                        }
+
+
+                    </table>
+                </div>
+
+                <button type="submit" class="btn btn-success btn-block">Submit</button>
+
+            </div>
+        </div>
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "PartyWise";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+  int Index = 1;
+}
+
+@model SuperSurvey.Models.NameCountModels
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <strong>Survey Report Party Wise @ViewBag.PName</strong>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <table class="table table-bordered">
+                <tr>
+                    <th>SR.N.</th>
+                    <th>Party Name</th>
+                    <th>Total Count</th>
+
+                </tr>
+
+                @foreach (var l in Model._List)
+                {
+                    <tr>
+                        <td>@Index</td>
+                        <td>@l.Name</td>
+                        <td>
+                            <a href="@Url.Action("FullDetails", "Report", new { @id = l.ID, @PID = l.PID })">@l.Count</a>
+                        </td>
+                    </tr>
+                    Index += 1;
+                }
+            </table>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <br />
+    </div>
+</div>
+
+
+

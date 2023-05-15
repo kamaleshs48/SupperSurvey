@@ -1,0 +1,619 @@
+USE [testing]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_SurveyAssign]    Script Date: 16-11-2018 18:11:24 ******/
+DROP PROCEDURE [dbo].[sp_SurveyAssign]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_SurveyAddUser]    Script Date: 16-11-2018 18:11:24 ******/
+DROP PROCEDURE [dbo].[sp_SurveyAddUser]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_SaveUpdateParty]    Script Date: 16-11-2018 18:11:24 ******/
+DROP PROCEDURE [dbo].[sp_SaveUpdateParty]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GetUserData]    Script Date: 16-11-2018 18:11:24 ******/
+DROP PROCEDURE [dbo].[sp_GetUserData]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GetSurveyDetails]    Script Date: 16-11-2018 18:11:24 ******/
+DROP PROCEDURE [dbo].[sp_GetSurveyDetails]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GetSurveyData]    Script Date: 16-11-2018 18:11:24 ******/
+DROP PROCEDURE [dbo].[sp_GetSurveyData]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_CreateSurvey]    Script Date: 16-11-2018 18:11:24 ******/
+DROP PROCEDURE [dbo].[sp_CreateSurvey]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_CreateSurvey]    Script Date: 16-11-2018 18:11:24 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE  [dbo].[sp_CreateSurvey]
+	       ( 
+	        @ORG_ID int =0
+	       ,@Name Varchar (max)=null
+           ,@Discreption varchar(max)=null
+           ,@Status int=0
+           ,@Survey_For_ID int =0
+           ,@Survey_Type_ID int=0
+           ,@SurveyID int=0
+           ,@PartyID varchar(max)=null
+           ,@PartyIDS varchar(max)=null
+           ,@PersonIDS varchar(max)=null
+           ,@OrderIndex varchar(max)=null
+           ,@Mode varchar(max)='Save'
+           
+           )
+	
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	
+	IF @Mode='Save'
+	BEGIN
+	
+	
+-- Add the parameters for the stored procedure here
+           INSERT INTO [tbl_SurveyNameMaster]
+           ([Name]
+           ,[Discreption]
+           ,[Status]
+           ,[Survey_For_ID]
+           ,[Survey_Type_ID]
+           ,[ORG_ID]
+           )
+     VALUES
+           (@Name
+           ,@Discreption
+           ,1
+           ,@Survey_For_ID
+           ,@Survey_Type_ID
+           ,@ORG_ID
+           )
+          SET @SurveyID=SCOPE_IDENTITY()
+    -- Insert statements for procedure here
+	
+	IF @Survey_Type_ID=3
+	BEGIN
+	INSERT INTO [tbl_Survey_PartyMap]
+           ([Survey_ID]
+           ,[Status]
+           ,[CreatedDate]
+           ,[CreatedByID]
+           ,[ORG_ID]
+           ,[Party_ID]
+           ,[Persone_ID]
+           
+           )
+     SELECT 
+     @SurveyID
+     ,1
+     ,GETDATE()
+     ,1
+     ,@ORG_ID
+     ,t.Item 
+     ,t2.Item
+      from  dbo.Split(@PartyIDS,',') t
+      LEFT JOIN   dbo.Split(@PersonIDS,',') t2 ON t.ID=t2.ID
+	 
+	
+	END
+	ELSE
+	BEGIN
+	
+	INSERT INTO [tbl_Survey_PartyMap]
+           ([Survey_ID]
+           ,[Status]
+           ,[CreatedDate]
+           ,[CreatedByID]
+           ,[Persone_ID]
+           ,[Party_ID]
+           ,[ORG_ID]
+           )
+     SELECT 
+     @SurveyID
+     ,1
+     ,GETDATE()
+     ,1
+     ,0
+     ,t.Item
+     ,@ORG_ID  from  dbo.Split(@PartyID,',') t
+	END
+	END
+
+	--Update
+
+	IF @Mode='UPDATE'
+	BEGIN
+	
+	
+-- Add the parameters for the stored procedure here
+          
+    -- Insert statements for procedure here
+	
+	Delete From tbl_Survey_PartyMap Where Survey_ID=@SurveyID
+
+
+	Update tbl_SurveyNameMaster Set Name=@Name ,Discreption=@Discreption
+	,Survey_Type_ID=@Survey_Type_ID,Survey_For_ID=@Survey_For_ID Where ID=@SurveyID
+
+	IF @Survey_Type_ID=3
+	BEGIN
+	INSERT INTO [tbl_Survey_PartyMap]
+           ([Survey_ID]
+           ,[Status]
+           ,[CreatedDate]
+           ,[CreatedByID]
+           ,[ORG_ID]
+           ,[Party_ID]
+           ,[Persone_ID]
+           
+           )
+     SELECT 
+     @SurveyID
+     ,1
+     ,GETDATE()
+     ,1
+     ,@ORG_ID
+     ,t.Item 
+     ,t2.Item
+      from  dbo.Split(@PartyIDS,',') t
+      LEFT JOIN   dbo.Split(@PersonIDS,',') t2 ON t.ID=t2.ID
+	 
+	
+	END
+	ELSE
+	BEGIN
+	
+	INSERT INTO [tbl_Survey_PartyMap]
+           ([Survey_ID]
+           ,[Status]
+           ,[CreatedDate]
+           ,[CreatedByID]
+           ,[Persone_ID]
+           ,[Party_ID]
+           ,[ORG_ID]
+           )
+     SELECT 
+     @SurveyID
+     ,1
+     ,GETDATE()
+     ,1
+     ,0
+     ,t.Item
+     ,@ORG_ID  from  dbo.Split(@PartyID,',') t
+	END
+	END
+
+
+
+
+	ELSE IF @Mode='ChangeOrder'
+	Update tbl_SurveyNameMaster Set Name=@Name where ID=@SurveyID
+	Update T1
+	SET T1.ORDER_ID= T3.Item
+	From tbl_Survey_PartyMap  T1
+	Inner Join dbo.Split(@PartyIDS,',') T2 ON T1.Party_ID=T2.Item
+	Inner Join dbo.Split(@OrderIndex,',') T3 ON T2.ID=T3.ID
+	WHERE T1.Survey_ID=@SurveyID
+	
+	
+	
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GetSurveyData]    Script Date: 16-11-2018 18:11:24 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE proc [dbo].[sp_GetSurveyData]  
+ @PageIndex INT   
+,@PageSize int  
+AS  
+BEGIN   
+  DECLARE @PageCount INT  
+  
+------Select UM.User_Name 'User Name', SNM.Name 'Survey Name', PM.Name 'Party Name', SM.StateName,LM.Name 'LokSabhaName'  
+------,VM.NAME 'Vidhansabha Name'  
+------,WM.Name 'Ward/Block'  
+------,CV.Name 'Area'  
+------,SD.OtherArea  
+------,SD.GPSCoordinate  
+------,SD.SurveyDate 'Survey Date'  
+------,SD.CreatedDate 'Post Date'  
+------ from tbl_SurveyData SD   
+------INNER Join tbl_UserMaster UM On Um.ID=SD.User_ID  
+------INNER JOIN tbl_SurveyNameMaster SNM ON SNM.ID=SD.Survey_ID  
+------INNER Join tbl_PartyMaster PM ON PM.ID=SD.Party_ID  
+------INNER Join tbl_StateMaster SM ON SM.ID=SD.State_ID  
+------LEFT JOIN tbl_Loksabha LM ON LM.ID=SD.LokSabha_ID  
+------LEFT JOIN  tbl_Vidhansabha VM ON VM.ID=SD.VidhanSabha_ID  
+------LEFT JOIN tbl_WordBlock WM  ON WM.ID=SD.Word_ID  
+------LEFT JOIN tbl_AreaCityVillage CV on CV.ID=SD.Area_ID  
+  
+  SELECT ROW_NUMBER() OVER (  
+   ORDER BY SD.ID ASC  
+   ) AS RowNumber  
+  , UM.User_Name 'User_Name', SNM.Name 'Survey_Name',
+   PM.Name 'Party_Name', SM.StateName,LM.Name 'LokSabhaName'  
+,VM.NAME 'Vidhansabha_Name'  
+,WM.Name 'Ward_Block'  
+,CV.Name 'Area'  
+,SD.OtherArea  
+,SD.GPSCoordinate  
+,SD.SurveyDate 'Survey_Date'  
+,SD.CreatedDate 'Post_Date'
+,SD.Persone_ID
+,SD.Street
+ INTO #Results  
+ FROM 
+ tbl_SurveyData SD   
+INNER Join tbl_UserMaster UM On Um.ID=SD.User_ID  
+INNER JOIN tbl_SurveyNameMaster SNM ON SNM.ID=SD.Survey_ID  
+INNER Join tbl_PartyMaster PM ON PM.ID=SD.Party_ID  
+INNER Join tbl_StateMaster SM ON SM.ID=SD.State_ID  
+LEFT JOIN tbl_Loksabha LM ON LM.ID=SD.LokSabha_ID  
+LEFT JOIN  tbl_Vidhansabha VM ON VM.ID=SD.VidhanSabha_ID  
+LEFT JOIN tbl_WordBlock WM  ON WM.ID=SD.Word_ID  
+LEFT JOIN tbl_AreaCityVillage CV on CV.ID=SD.Area_ID  
+ DECLARE @RecordCount INT  
+ 
+ SELECT @RecordCount = COUNT(*)FROM #Results  
+  
+ SET @PageCount = CEILING(CAST(@RecordCount AS DECIMAL(10, 2)) / CAST(@PageSize AS DECIMAL(10, 2)))  
+ PRINT @PageCount  
+  
+ SELECT * ,@PageCount AS PageCount FROM #Results  
+ WHERE RowNumber BETWEEN (@PageIndex - 1) * @PageSize + 1 
+ AND (((@PageIndex - 1) * @PageSize + 1) + @PageSize) - 1  
+  
+ DROP TABLE #Results  
+  
+  
+  
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GetSurveyDetails]    Script Date: 16-11-2018 18:11:24 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+Create PROCEDURE [dbo].[sp_GetSurveyDetails] 
+	@Survey_ID int =0
+AS
+BEGIN
+
+Select* from tbl_SurveyNameMaster Where ID = @Survey_ID
+
+select PM.Name,PM1.Name As PersonName, PS.ORDER_ID,PM.ID PartyID,PS.ORDER_ID from tbl_Survey_PartyMap PS 
+INNER JOIN tbl_PartyMaster PM  ON PM.ID=PS.Party_ID
+Left JOIN tbl_PartyMaster PM1 ON PM.ID=PS.Persone_ID
+ where Survey_ID=@Survey_ID order by PS.Order_ID   
+  
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[sp_GetUserData]    Script Date: 16-11-2018 18:11:24 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[sp_GetUserData] 
+	@UserID int =0
+AS
+BEGIN
+
+      DECLARE @State_ID int=0;
+     --select @State_ID=id  from tbl_StateMaster where ID in 
+-- Update Rrow COund
+
+
+Update T1
+Set T1.AblEntry = T2.TCount
+from tbl_Survey_UserMap T1 inner Join (
+select User_ID,Survey_ID,count(ID) TCount from tbl_SurveyData group by User_ID,Survey_ID
+)  T2 ON 
+ T2.Survey_ID=T1.Survey_ID AND T2.User_ID=T1.User_ID
+
+
+
+
+
+
+      SELECT  [ID] ,[StateName] ,[Code],[Status]  FROM[tbl_StateMaster]
+      SELECT ID,[State_ID] ,[Code]  ,[Name],[Status] FROM [tbl_Loksabha] Where State_ID in (Select State_ID from tbl_Survey_UserMap where User_ID =@UserID)
+      SELECT  [ID] ,[State_ID] ,[Loksabha_ID] ,[Code] ,[Name] ,[Status] FROM [tbl_Vidhansabha]  Where State_ID in (Select State_ID from tbl_Survey_UserMap where User_ID =@UserID)
+      SELECT [ID] ,[Vidhansabha_ID],[Code] ,[Name] ,[Status] FROM [tbl_WordBlock]
+      SELECT [ID]  ,[Name] ,[Code] ,[WardBlock_ID] ,[AreaCityVillage_ID] FROM [tbl_BoothMaster]
+      SELECT  [ID] ,[WardBlock_ID] ,[Code] ,[Name] ,[Status]FROM [tbl_AreaCityVillage]
+  
+-- Get Aggign Survey Name
+
+	SELECT SM.ID
+       ,SM.NAME
+       ,SU.State_ID
+       ,SU.Loksabha_ID
+       ,SU.Vidhansabha_ID
+       ,SU.WardBlock_ID  
+       ,MAX(SU.MaxEntry)  MaxLimit
+       ,MAX(SU.AblEntry) PresentLimit
+       ,SF.Survey_For 
+       ,MAX(Convert(varchar,SU.ExpDate,105)) ExpDate
+       ,MAX(Convert(varchar,SU.ExpDate,112)) ExpDate1 
+       ,MAX(ST.TTMCSD) 'WardLevelName'
+       FROM  tbl_Survey_UserMap SU  INNER JOIN  tbl_SurveyNameMaster SM  ON SU.Survey_ID=SM.ID
+       INNER JOIN tbl_Survey_PartyMap SP ON SM.ID=SP.Survey_ID
+       INNER JOIN tbl_SurveyFor SF ON SF.ID=SM.Survey_For_ID
+       INNER JOIN tbl_StateMaster ST ON ST.ID=SU.State_ID
+       WHERE SU.User_ID=@UserID  GROUP BY SM.NAME,SM.ID,SU.State_ID
+       ,SU.Loksabha_ID
+       ,SU.Vidhansabha_ID
+       ,SU.WardBlock_ID
+       ,SF.Survey_For 
+       
+  -- Get Aggign Party Name
+    SELECT 
+      PM.ID,
+      SM.Survey_Type_ID,
+      SP.Survey_ID
+      ,PM.HindiName
+      ,PM.NAME PartyName
+      ,PM.IconsName
+      ,PS.NAME PersonName
+      ,PS.IconsName PersonImage
+  FROM tbl_SurveyNameMaster SM  INNER JOIN tbl_Survey_UserMap SU  ON SU.Survey_ID=SM.ID
+  INNER JOIN tbl_Survey_PartyMap SP ON SM.ID=SP.Survey_ID
+  INNER JOIN tbl_PartyMaster PM ON SP.PARTY_ID=PM.ID
+  LEFT JOIN tbl_PartyMaster PS ON PS.ID=SP.Persone_ID
+  WHERE SU.User_ID=@UserID ORDER BY SP.ORDER_ID
+   
+  
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[sp_SaveUpdateParty]    Script Date: 16-11-2018 18:11:24 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[sp_SaveUpdateParty] 
+            @Party_ID int=0
+	       ,@Name nvarchar(max)=null
+	       ,@ORG_ID int=0
+	       ,@Code nvarchar(max)=null
+           ,@Short_Name nvarchar(max)=null
+           ,@IconsName nvarchar(max)=null
+           ,@Hindi_Name nvarchar(max)=null
+           ,@Type_ID varchar(max)=null
+           ,@IsActive int
+           ,@Mode varchar(200)='Save'
+           
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    -- Insert statements for procedure here
+    IF @Mode='Save'
+         BEGIN
+       
+	INSERT INTO [tbl_PartyMaster]
+           ([Name]
+           ,[Short_Name]
+           ,[IconsName]
+           ,[HindiName]
+           ,[Type_ID]
+           ,[Status]
+           ,[Code]
+           ,[ORG_ID]
+           )
+     VALUES
+           (@Name
+           ,@Short_Name
+           ,@IconsName
+           ,@Hindi_Name
+           ,@Type_ID
+           ,@IsActive
+           ,@Code
+           ,@ORG_ID
+        )
+      END  
+     IF @Mode='Update' 
+         BEGIN
+         UPDATE tbl_PartyMaster Set
+         Name=@Name,
+         Code=@Code,
+         IconsName=@IconsName,
+         Short_Name=@Short_Name,
+         HindiName=@Hindi_Name
+       
+         WHERE ID=@Party_ID
+              
+           
+           
+           
+         END
+        
+
+
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[sp_SurveyAddUser]    Script Date: 16-11-2018 18:11:24 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE proc [dbo].[sp_SurveyAddUser]
+            @ORG_ID int =0
+           ,@SurveyID int =0
+           ,@Name varchar (max)=null
+           ,@User_Name varchar (max)=null
+           ,@Mobile varchar (max)=null
+           ,@Mobile_2 varchar (max)=null
+           ,@EMail varchar (max)=null
+           ,@User_Type varchar (max)=null
+           ,@User_Password varchar (max)=null
+           ,@IsActive int=1
+           ,@Address varchar (max)=null
+           ,@Mode varchar(max)='Save'
+
+AS 
+BEGIN
+    IF @Mode='Save'
+       BEGIN
+       INSERT INTO [tbl_UserMaster]
+           ([Name]
+           ,[User_Name]
+           ,[Mobile]
+           ,[Mobile_2]
+           ,[Email]
+           ,[User_Type]
+           ,[User_Password]
+           ,[IsActive]
+           ,[Address]
+           ,[ORG_ID]
+           )
+     VALUES
+     (
+      @Name
+           ,@User_Name
+           ,@Mobile
+           ,@Mobile_2
+           ,@Email
+           ,@User_Type
+           ,@User_Password
+           ,@IsActive
+           ,@Address
+           ,@ORG_ID
+     )
+       END
+
+  ELSE IF @Mode='GetUserList'
+      BEGIN
+      
+      SELECT * FROM  tbl_UserMaster WHERE IsActive=1 AND User_Type='SurveyUser' AND ORG_ID=@ORG_ID
+      
+      
+      END
+  ELSE IF @Mode='GetUserListForSurveyAssign'
+      BEGIN
+      
+      SELECT UM.*,dbo.CheckSurveyAssign(UM.ID,@SurveyID) IsAssign FROM  tbl_UserMaster UM 
+     
+     
+      
+      WHERE UM.IsActive=1 AND  UM.ORG_ID=@ORG_ID
+      
+         
+       AND UM.User_Type='SurveyUser'
+      
+      
+      END     
+      
+
+
+
+END
+
+GO
+/****** Object:  StoredProcedure [dbo].[sp_SurveyAssign]    Script Date: 16-11-2018 18:11:24 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+-- =============================================
+CREATE PROCEDURE [dbo].[sp_SurveyAssign]
+	-- Add the parameters for the stored procedure here
+	        @ORG_ID int =0
+	       ,@Survey_ID int=0
+           ,@User_ID varchar(max)=null
+           ,@State_ID int=0
+           ,@Loksabha_ID int=0
+           ,@Vidhansabha_ID int=0
+           ,@WardBlock_ID int=0
+           ,@AreaCityVillage_ID int=0
+           ,@Work_Name varchar(max)=null
+           ,@ExpDate  varchar(max)='01/01/2099'
+           ,@MaxEntry int=1000
+           ,@AblEntry int =0   
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+
+--Delete IF Exist
+
+DELETE FROM tbl_Survey_UserMap WHERE Survey_ID=
+
+@Survey_ID AND User_ID in ( Select T.Item  from dbo.Split(@User_ID,',') T)
+
+    -- Insert statements for procedure here
+    
+    
+    
+    
+	INSERT INTO [tbl_Survey_UserMap]
+           (
+            [Survey_ID]
+           ,[State_ID]
+           ,[Loksabha_ID]
+           ,[Vidhansabha_ID]
+           ,[WardBlock_ID]
+           ,[AreaCityVillage_ID]
+           ,[Work_Name]
+           ,[ExpDate]
+           ,[MaxEntry]
+           ,[AblEntry]
+           ,[User_ID]
+           ,[ORG_ID]
+           )
+           
+           SELECT 
+            @Survey_ID
+           ,@State_ID 
+           ,@Loksabha_ID 
+           ,@Vidhansabha_ID 
+           ,@WardBlock_ID 
+           ,@AreaCityVillage_ID 
+           ,@Work_Name
+           ,convert(datetime, @ExpDate, 103)
+           ,@MaxEntry
+           ,@AblEntry
+           ,T.Item
+           ,@ORG_ID
+           FROM dbo.Split(@User_ID,',') T
+           
+           
+END
+
+GO

@@ -1,0 +1,53 @@
+﻿@{
+    ViewBag.Title = "PartyList";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    int Index = 1;
+}
+@model SuperSurvey.Models.PartyModels
+    <script>
+        $(".menu2").removeClass("active").removeClass("toggled");
+        $(".menu1").addClass("active").addClass("toggled");
+    </script>
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <strong>@Model.PanelTitle</strong>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <table class="table table-bordered">
+                <tr>
+                    <th>S.No.</th>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Short Name</th>
+                    <th>Regional Language</th>
+                    <th width="50" height="50">Images</th>
+                    <th>Action</th>
+                </tr>
+
+                @foreach (var l in Model.PartyList)
+                {
+                    <tr>
+                        <td>@Index</td>
+                        <td>@l.Code</td>
+                        <td>@l.Name</td>
+                        <td>@l.Short_Name</td>
+                        <td>@l.Hindi_Name</td>
+                        <td width="50" height="50"><img src="@l.IconsPath" width="50" height="50" /></td>
+                        <td>
+                            <a href="@Url.Action("CreateParty","App",new {@Type_ID = Model.Type_ID,@id=l.Party_ID })" class="btn btn-primary btn-sm">Edit</a>
+                            <a href="#" class="btn btn-danger btn-sm">Delete</a>
+
+                        </td>
+                    </tr>
+                    Index += 1;
+                }
+
+
+            </table>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <a href="@Url.Action("CreateParty","App",new { @Type_ID = Model.Type_ID })" class="btn btn-primary">Add New</a>
+    </div>
+</div>

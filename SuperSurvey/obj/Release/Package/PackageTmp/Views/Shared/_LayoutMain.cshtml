@@ -1,0 +1,390 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html style="overflow: hidden;">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mega Survey</title>
+    <!-- Vendor CSS -->
+    <link href="~/Content/css/animate.min.css" rel="stylesheet">
+    <link href="~/Content/css/sweet-alert.css" rel="stylesheet">
+    <link href="~/Content/css/circle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Content/css/font-awesome.min.css">
+    <link href="~/Content/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+    <!-- CSS -->
+    <link href="~/Content/css/testsCustom.css" rel="stylesheet">
+
+    <link href="~/Content/css/fullcalendar.min.css" rel="stylesheet">
+    <link href="~/Content/css/material-design-iconic-font.min.css" rel="stylesheet">
+
+    <link href="~/Content/css/app.min.1.css" rel="stylesheet">
+    <link href="~/Content/css/app.min.2.css" rel="stylesheet">
+
+    <script src="~/scripts/jquery.min.js" type="text/javascript"></script>
+
+    <script src="~/scripts/jquery.validate.min.js" defer="defer" type="text/javascript"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js" defer="defer" type="text/javascript"></script>
+
+    <script src="~/Scripts/common.js"></script>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style type="text/css">
+        .jqstooltip {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            visibility: hidden;
+            background: rgb(0, 0, 0) transparent;
+            background-color: rgba(0,0,0,0.6);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000);
+            -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99000000, endColorstr=#99000000)";
+            color: white;
+            font: 10px arial, san serif;
+            text-align: left;
+            white-space: nowrap;
+            padding: 5px;
+            border: 1px solid white;
+            z-index: 10000;
+        }
+
+        .jqsfield {
+            color: white;
+            font: 10px arial, san serif;
+            text-align: left;
+        }
+    </style>
+</head>
+<body class="sw-toggled">
+    <script>
+
+        $(document).ready(function () {
+            if ('@TempData["Message"]' != '') {
+                swal('@TempData["Message"]');
+
+            }
+
+        });
+
+
+        function Headermenukeypress(event) {
+            var keycode = event.keyCode || e.charCode;
+            if (keycode == '13' && $("#txtHSearch").val().trim() != "") {
+
+                window.open('/Home/MemberProfile' + "?q=" + $("#txtHSearch").val());
+
+            }
+        }
+
+    </script>
+    <header id="header">
+        <ul class="header-inner">
+            <li id="menu-trigger" data-trigger="#sidebar">
+                <div class="line-wrap">
+                    <div class="line top"></div>
+                    <div class="line center"></div>
+                    <div class="line bottom"></div>
+                </div>
+            </li>
+
+            <li class="logo hidden-xs">
+                <a href="#">
+                    Mega Survey
+                </a>
+            </li>
+
+            <li class="pull-right">
+                <ul class="top-menu">
+
+                    <li id="toggle-width" style="display: block">
+                        <div class="toggle-switch">
+                            <input id="tw-switch" type="checkbox" hidden="hidden">
+                        </div>
+                    </li>
+                    <li class="hidden-lg hidden-md">
+                        <a href="#" class="tm-home"></a>
+                    </li>
+
+
+                    <li class="dropdown"></li>
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="tm-settings" href="#"></a>
+                        <ul class="dropdown-menu dm-icon pull-right">
+
+                            <li>
+                                <a href="@Url.Action("MemberProfile", "Home")"><i class="zmdi zmdi-face "></i>View Profile</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ChangePassword", "Home")"><i class="fa fa-key fa-fw"></i>Change Password</a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+
+                                <a href="@Url.Action("Login", "Home")"><i class="fa fa-sign-out fa-fw"></i>LogOut</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </li>
+        </ul>
+        <!-- Top Search Content -->
+        <div id="top-search-wrap">
+            <form class="navbar-form">
+                <input type="text" placeholder="find courses, articles and events..." class="form-control" id="txtHSearch" name="q" onkeypress="return Headermenukeypress(event);">
+                <i id="top-search-close">×</i>
+
+            </form>
+        </div>
+    </header>
+    <section id="main">
+        <aside id="sidebar">
+            <div class="sidebar-inner c-overflow" tabindex="0">
+                <div class="profile-menu toggled">
+                    <a href="#">
+                        @* <div class="profile-pic">
+                                <img id="Profile" src="~/Content/user_img.png">
+                            </div>*@
+                        <div class="profile-pic">
+                            <div class="c100 p5 green picuser p30">
+
+                                <img id="Profile" style="width: 101px; height: 102px; z-index: 999; padding: 9px; position: absolute;"
+                                     src="@Url.Content("~/Content/image/user_img.png")" class="img-circle">
+                                <div class="slice">
+                                    <div class="bar" id="b2" style="border-color: green;"></div>
+                                    <div class="fill" id="f2" style="border-color: green;"></div>
+                                </div>
+                            </div>
+                            <div class="showcount" style="text-align: center; padding-top: 12%; font-size: 2em;">30 %</div>
+                            <span>
+                                Profile Completed
+                            </span>
+                        </div>
+                        <div class="profile-info" style="clear: both">
+
+                            <i class="fa fa-caret-down"></i><span id="uname">Admin User</span>
+                            <i class="zmdi zmdi-arrow-drop-down"></i>
+                        </div>
+
+                    </a>
+
+                    <ul class="main-menu">
+                        <li>
+                            <a href="@Url.Action("MemberProfile", "Home")"><i class="zmdi zmdi-face zmdi-hc-fw"></i>View Profile</a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("ChangePassword", "Home")"><i class="fa fa-key fa-fw"></i>Change Password</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+
+                            <a href="@Url.Action("Login", "Home")"><i class="fa fa-sign-out fa-fw"></i>LogOut</a>
+                        </li>
+
+                    </ul>
+                </div>
+                <ul class="main-menu">
+                    <li class="active">
+                        <a href="@Url.Action("SurveyData", "Home")"><i class="fa fa-tachometer" aria-hidden="true"></i>Dashboard</a>
+                    </li>
+
+                    <li class="sub-menu menu1">
+                        <a href="#"><i class="fa fa-table"></i>Master</a>
+
+                        <ul>
+
+                            <li>
+                                <a href="@Url.Action("State", "Master")"><i class="fa fa-table fa-fw"></i>&nbsp;State</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("District", "Master")"><i class="fa fa-table fa-fw"></i>&nbsp;District</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Loksabha", "Master")"><i class="fa fa-table fa-fw"></i>&nbsp;Loksabha</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Vidhansabha", "Master")"><i class="fa fa-table fa-fw"></i>&nbsp;Vidhansabha</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("WardBlock", "Master")"><i class="fa fa-table fa-fw"></i>&nbsp;WardBlock</a>
+                            </li>
+
+                            <li>
+                                <a href="@Url.Action("City", "Master")"><i class="fa fa-table fa-fw"></i>&nbsp;City/Area/Village</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Booth", "Master")"><i class="fa fa-table fa-fw"></i>&nbsp;Booth</a>
+                            </li>
+
+                            <li>
+                                <a href="@Url.Action("PartyList", "App",new {@Type_ID=1 })"><i class="fa fa-table fa-fw"></i>&nbsp;Party Name</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("PartyList", "App",new {@Type_ID=2 })"><i class="fa fa-users"></i>&nbsp;Person Name</a>
+                            </li>
+                            @*<li>
+                                <a href="@Url.Action("PartyList", "App",new {@Type_ID=3 })"><i class="fa fa-table fa-fw"></i>&nbsp;Party/Person</a>
+                            </li>*@
+                            <li>
+                                <a href="@Url.Action("SurveyList", "APP")"><i class="fa fa-life-ring"></i>&nbsp; Survey  Name</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("ClientDetails", "APP")"><i class="fa fa-users"></i>&nbsp; Client Details</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("UserList", "APP")"><i class="fa fa-table fa-fw"></i>&nbsp; Users Details</a>
+                            </li>
+                            @*<li>
+                                <a href="@Url.Action("SurveyForList", "APP")"><i class="fa fa-star fa-fw"></i>&nbsp; Survey For List</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("SurveyAssign", "APP")"><i class="fa fa-star fa-fw"></i>&nbsp; Survey Assign</a>
+                            </li>*@
+                        </ul>
+                    </li>
+
+
+                    <li class="sub-menu menu2">
+                        <a href="#"><i class="zmdi zmdi-view-list"></i>Report</a>
+
+                        <ul>
+                            <li>
+                                <a href="@Url.Action("ReportFinel", "Report")"><i class="fa fa-calendar fa-fw"></i>&nbsp; Survey Report</a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("QuestionReport", "Report")"><i class="fa fa-calendar fa-fw"></i>&nbsp; Question Report</a>
+                            </li>
+                        </ul>
+                    </li>
+                    @*<li class="sub-menu">
+                            <a href="#"><i class="fa fa-cubes" aria-hidden="true"></i>My Resources</a>
+                            <ul style="overflow: hidden; display: none;">
+                                <li>
+                                    <a href="@Url.Action("EBooks", "Home")"><i class="fa fa-book" aria-hidden="true"></i>&nbsp; E-Books</a>
+                                </li>
+                                <li class="active">
+                                    <a href="@Url.Action("MyDocuments", "Home")"><i class=" fa fa-bullhorn fa-fw"></i>&nbsp; My Documents</a>
+                                </li>
+                            </ul>
+                        </li>*@
+
+
+                </ul>
+            </div>
+            <div id="ascrail2001" class="nicescroll-rails nicescroll-rails-vr" style="width: 5px; z-index: 5; cursor: default; position: absolute; top: 0px; left: 263px; height: 569px; display: none; opacity: 0;">
+                <div class="nicescroll-cursors" style="position: relative; top: 0px; float: right; width: 5px; height: 0px; background-color: rgba(0, 0, 0, 0.498039); border: 0px; background-clip: padding-box; border-radius: 0px;"></div>
+            </div>
+            <div id="ascrail2001-hr" class="nicescroll-rails nicescroll-rails-hr" style="height: 5px; z-index: 5; top: 564px; left: 0px; position: absolute; cursor: default; display: none; opacity: 0;">
+                <div class="nicescroll-cursors" style="position: absolute; top: 0px; height: 5px; width: 0px; background-color: rgba(0, 0, 0, 0.498039); border: 0px; background-clip: padding-box; border-radius: 0px; left: 0px;"></div>
+            </div>
+        </aside>
+        <div>
+            <section id="content">
+                <div class="container">
+                    <div>
+                        @RenderBody()
+                    </div>
+                   
+                </div>
+            </section>
+
+        </div>
+    </section>
+
+    <footer id="footer" style="background: #fff; color: #2e2e2e">
+        <div class="p-20">
+            @*<p class="pull-left">Copyright © 2016 P Soft Tech. All Rights Reserved.</p>*@
+
+            <p class="pull-right"></p>
+
+        </div>
+    </footer>
+
+    <div id="alertModel" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="panel panel-blue">
+                    <div class="panel-heading">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <h4 class="panel-title" style="text-align: left; display: block">Message</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            <i class="fa fa-warning"></i><span></span>
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*<script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>*@
+    <script src="~/Scripts/jquery.flot.js"></script>
+    <script src="~/Scripts/jquery.flot.resize.js"></script>
+    <script src="~/Scripts/jquery.flot.pie.js"></script>
+
+    <script src="~/Scripts/jquery.flot.tooltip.min.js"></script>
+
+    <script src="~/Scripts/curvedLines.js"></script>
+    <script src="~/Scripts/jquery.sparkline.min.js"></script>
+    <script src="~/Scripts/jquery.easypiechart.min.js"></script>
+
+    <script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Scripts/fullcalendar.min.js"></script>
+
+
+
+    <script src="~/Scripts/waves.min.js"></script>
+    <script src="~/Scripts/bootstrap-growl.min.js"></script>
+    <script src="~/Scripts/sweet-alert.min.js"></script>
+
+    <script src="~/Scripts/pie-chart.js"></script>
+    <script src="~/Scripts/jquery.bootstrap.wizard.min.js"></script>
+
+    <script src="~/Scripts/bar-chart.js"></script>
+    <script src="~/Scripts/functions.js"></script>
+    <script src="~/Scripts/demo.js"></script>
+
+    <div id="ascrail2000" class="nicescroll-rails nicescroll-rails-vr" style="width: 5px; z-index: auto; cursor: default; position: fixed; top: 0px; height: 100%; right: 0px; display: block; opacity: 0;">
+        <div class="nicescroll-cursors" style="position: relative; top: 0px; float: right; width: 5px; height: 295px; background-color: rgba(0, 0, 0, 0.298039); border: 0px; background-clip: padding-box; border-radius: 0px;"></div>
+    </div>
+    <div id="ascrail2000-hr" class="nicescroll-rails nicescroll-rails-hr" style="height: 5px; z-index: auto; position: fixed; left: 0px; width: 100%; bottom: 0px; cursor: default; display: none; opacity: 0;">
+        <div class="nicescroll-cursors" style="position: absolute; top: 0px; height: 5px; width: 1366px; background-color: rgba(0, 0, 0, 0.298039); border: 0px; background-clip: padding-box; border-radius: 0px;"></div>
+    </div>
+    <div>
+        <div class="sweet-overlay" tabindex="-1"></div>
+        <div class="sweet-alert" tabindex="-1">
+            <div class="icon error"><span class="x-mark"><span class="line left"></span><span class="line right"></span></span></div>
+            <div class="icon warning"><span class="body"></span><span class="dot"></span></div>
+            <div class="icon info"></div>
+            <div class="icon success">
+                <span class="line tip"></span><span class="line long"></span>
+                <div class="placeholder"></div>
+                <div class="fix"></div>
+            </div>
+            <div class="icon custom"></div>
+            <h2>Title</h2>
+            <p class="lead text-muted">Text</p>
+            <p>
+                <button class="cancel btn btn-lg" tabindex="2">Cancel</button>
+                <button class="confirm btn btn-lg" tabindex="1">OK</button>
+            </p>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script src="~/Scripts/jquery.nicescroll.min.js"></script>
+
+</body>
+@RenderSection("scripts", required: false)
+</html>

@@ -1,0 +1,304 @@
+﻿@{
+    ViewBag.Title = "CreateSurvey";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+
+}
+
+<script>
+    $(".menu2").removeClass("active").removeClass("toggled");
+    $(".menu1").addClass("active").addClass("toggled");
+
+    $(document).ready(function () {
+        $("#P1").hide();
+        $("#P2").hide();
+        $("#P3").hide();
+
+        $("#Survey_Type_ID").change();
+
+
+    });
+    function BindParty(id)
+    {
+        $("#P1").hide();
+        $("#P2").hide();
+        $("#P3").hide();
+        $('#P' + id.value).show();
+
+    }
+</script>
+
+
+
+@model SuperSurvey.Models.SurveyMasterModels
+@using (Html.BeginForm("CreateSurvey", "App"))
+{
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <strong>Create Survey</strong>
+        </div>
+        <div class="panel-body">
+            @Html.ValidationSummary()
+            @Html.HiddenFor(m => m.SurveyID)
+            @Html.HiddenFor(m=>m.ORG_ID)
+            @Html.HiddenFor(m => m.Submit_Text)
+            <div class="pmbb-edit" id="conedit">
+                <dl class="dl-horizontal">
+                    <dt class="p-t-10">Name</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Description</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Survey For</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.DropDownListFor(m => m.Survey_For_ID, Model.Survey_For_List, "--Select--", new { @class = "form-control" })
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Survey Type</dt>
+                    <dd>
+                        <div class="fg-line">
+                            @Html.DropDownListFor(m => m.Survey_Type_ID, new List<SelectListItem>
+                              {
+                        new SelectListItem() {Text = "Party Wise", Value="1"},
+                        new SelectListItem() {Text = "Person Wise", Value="2"},
+                        new SelectListItem() {Text = "Party/Person Wise", Value="3" } }, "--Select--", new { @class = "form-control",@onchange= "BindParty(this)" })
+                        </div>
+                    </dd>
+                    <dt class="p-t-10">Select Party</dt>
+                    <dd>
+                        <div id="P1">
+
+                            @for (var i = 0; i < Model.PartyList.OrderBy(x => x.Checked).Count(); i++)
+                            {
+
+
+                                <table>
+                                    <tr>
+                                        <td>
+                                            @Html.HiddenFor(chk => chk.PartyList[i].Value)
+                                            @Html.HiddenFor(chk => chk.PartyList[i].Text)
+
+                                        </td>
+                                        <td>
+                                            @Html.CheckBoxFor(chk => chk.PartyList[i].Checked, new { style = "vertical- align:3px}" })
+                                        </td>
+                                        <td>
+                                            @Html.LabelFor(chk => chk.PartyList[i].Checked, Model.PartyList[i].Text)
+                                        </td>
+                                    </tr>
+                                </table>
+                            }
+                        </div>
+                        <div id="P2">
+                            @for (var i = 0; i < Model.PersoneList.OrderBy(x=>x.Checked).Count(); i++)
+                            {
+
+
+                                <table>
+                                    <tr>
+                                        <td>
+                                            @Html.HiddenFor(chk => chk.PersoneList[i].Value)
+                                            @Html.HiddenFor(chk => chk.PartyList[i].Text)
+
+                                        </td>
+                                        <td>
+                                            @Html.CheckBoxFor(chk => chk.PersoneList[i].Checked, new { Style = "vertical- align:3px}" })
+                                        </td>
+                                        <td>
+                                            @Html.LabelFor(chk => chk.PersoneList[i].Checked, Model.PersoneList[i].Text)
+                                        </td>
+                                    </tr>
+                                </table>
+                            }
+
+                        </div>
+                        <div id="P3">
+                            <table style="width:100%" border="1">
+                                <tr style="background-color:#8c9bf5;color:white">
+                                    <th style="width:50%">
+                                        <b>Party Name</b>
+                                    </th>
+                                    <th style="width:50%">
+                                        <b>Persone Name</b>
+                                    </th>
+
+                                </tr>
+                                <tr>
+                                    <td style="width:50%">
+
+                                        @Html.DropDownListFor(m => m.PartyIDS,
+                                       Model.PartyList
+                                                .OrderBy(n => n.Text)
+                                                .Select(n =>
+                                                new SelectListItem
+                                                {
+                                                    Value = n.Value.ToString(),
+                                                    Text = n.Text
+                                                }).ToList()
+
+                                       , "--Select--", new { @class = "form-control" })
+                                    </td>
+                                    <td>
+
+                                        @Html.DropDownListFor(m => m.PersonIDS,
+                                         Model.PersoneList
+                                                .OrderBy(n => n.Text)
+                                                .Select(n =>
+                                                new SelectListItem
+                                                {
+                                                    Value = n.Value.ToString(),
+                                                    Text = n.Text
+                                                }).ToList()
+
+                                       , "--Select--", new { @class = "form-control" })
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="width:50%">
+
+                                        @Html.DropDownListFor(m => m.PartyIDS,
+                                       Model.PartyList
+                                                .OrderBy(n => n.Text)
+                                                .Select(n =>
+                                                new SelectListItem
+                                                {
+                                                    Value = n.Value.ToString(),
+                                                    Text = n.Text
+                                                }).ToList()
+
+                                       , "--Select--", new { @class = "form-control" })
+                                    </td>
+                                    <td>
+
+                                        @Html.DropDownListFor(m => m.PersonIDS,
+                                         Model.PersoneList
+                                                .OrderBy(n => n.Text)
+                                                .Select(n =>
+                                                new SelectListItem
+                                                {
+                                                    Value = n.Value.ToString(),
+                                                    Text = n.Text
+                                                }).ToList()
+
+                                       , "--Select--", new { @class = "form-control" })
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="width:50%">
+
+                                        @Html.DropDownListFor(m => m.PartyIDS,
+                                       Model.PartyList
+                                                .OrderBy(n => n.Text)
+                                                .Select(n =>
+                                                new SelectListItem
+                                                {
+                                                    Value = n.Value.ToString(),
+                                                    Text = n.Text
+                                                }).ToList()
+
+                                       , "--Select--", new { @class = "form-control" })
+                                    </td>
+                                    <td>
+
+                                        @Html.DropDownListFor(m => m.PersonIDS,
+                                         Model.PersoneList
+                                                .OrderBy(n => n.Text)
+                                                .Select(n =>
+                                                new SelectListItem
+                                                {
+                                                    Value = n.Value.ToString(),
+                                                    Text = n.Text
+                                                }).ToList()
+
+                                       , "--Select--", new { @class = "form-control" })
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="width:50%">
+
+                                        @Html.DropDownListFor(m => m.PartyIDS,
+                                       Model.PartyList
+                                                .OrderBy(n => n.Text)
+                                                .Select(n =>
+                                                new SelectListItem
+                                                {
+                                                    Value = n.Value.ToString(),
+                                                    Text = n.Text
+                                                }).ToList()
+
+                                       , "--Select--", new { @class = "form-control" })
+                                    </td>
+                                    <td>
+
+                                        @Html.DropDownListFor(m => m.PersonIDS,
+                                         Model.PersoneList
+                                                .OrderBy(n => n.Text)
+                                                .Select(n =>
+                                                new SelectListItem
+                                                {
+                                                    Value = n.Value.ToString(),
+                                                    Text = n.Text
+                                                }).ToList()
+
+                                       , "--Select--", new { @class = "form-control" })
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="width:50%">
+
+                                        @Html.DropDownListFor(m => m.PartyIDS,
+                                       Model.PartyList
+                                                .OrderBy(n => n.Text)
+                                                .Select(n =>
+                                                new SelectListItem
+                                                {
+                                                    Value = n.Value.ToString(),
+                                                    Text = n.Text
+                                                }).ToList()
+
+                                       , "--Select--", new { @class = "form-control" })
+                                    </td>
+                                    <td>
+
+                                        @Html.DropDownListFor(m => m.PersonIDS,
+                                         Model.PersoneList
+                                                .OrderBy(n => n.Text)
+                                                .Select(n =>
+                                                new SelectListItem
+                                                {
+                                                    Value = n.Value.ToString(),
+                                                    Text = n.Text
+                                                }).ToList()
+
+                                       , "--Select--", new { @class = "form-control" })
+                                    </td>
+
+                                </tr>
+                            </table>
+
+                        </div>
+                    </dd>
+                </dl>
+                <button type="submit" class="btn succes btn-primary btn-block" value="Submit">@Model.Submit_Text</button>
+                
+               
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

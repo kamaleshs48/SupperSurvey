@@ -1,0 +1,126 @@
+﻿@{
+    ViewBag.Title = "ReportFinel";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    List<dynamic> obj1 = new List<dynamic>();
+    obj1 = ViewBag.Total;
+    var grid = new WebGrid(obj1, canPage: false);
+}
+<script>
+    $(".menu1").removeClass("active").removeClass("toggled");
+    $(".menu2").addClass("active").addClass("toggled");
+</script>
+@model SuperSurvey.Models.SurveyFinelReport
+@using (Html.BeginForm("ReportFinel", "report"))
+{
+    <div style="min-height:500px;max-height:600px;overflow-y:scroll;overflow-x:hidden ">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <strong>Survey Report</strong>
+                <div class="panel-title pull-right">
+                    <a href="@Url.Action("DashBoard","App")" class="">X</a>
+                </div>
+
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td style="width:20%">Select Survey</td>
+                            <td>
+                                @Html.DropDownListFor(m => m.SurveyID, Model.SurveyList, "Select", new { @class = "form-control" })
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td>
+                                Filter By
+                            </td>
+                            <td>
+
+
+                                @for (var i = 0; i < Model.GroupList.Count(); i++)
+                            {
+                            <div class="col-md-3">
+                                @Html.HiddenFor(chk => chk.GroupList[i].Value)
+                                @Html.HiddenFor(chk => chk.GroupList[i].Text)
+                                @Html.HiddenFor(chk => chk.GroupList[i].Order_Index)
+                                @Html.CheckBoxFor(chk => chk.GroupList[i].Checked, new { style = "vertical- align:3px}" })
+                                @Html.LabelFor(chk => chk.GroupList[i].Checked, Model.GroupList[i].Text)
+
+                            </div>
+                            }
+                            </td>
+                        </tr>
+                    </table>
+                   
+                        
+                    
+                    
+
+                </div>
+                <div class="row">
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>From:</td>
+                            <td>
+
+                                @Html.TextBoxFor(m => m.FDate, new { @class = "form-control1", @placeholder = "dd/MM/yyyy" })
+
+
+                            </td>
+                            <td>
+                                To
+                            </td>
+                            <td>
+                                @Html.TextBoxFor(m => m.TDate, new { @class = "form-control1", @placeholder = "dd/MM/yyyy" })
+                            </td>
+                            <td>Select</td>
+                            <td>
+                                @Html.DropDownListFor(m => m.SerachFieldsName, Model.GroupList.Select(n =>
+                                                  new SelectListItem
+                                                  {
+                                                      Value = n.Value.ToString(),
+                                                      Text = n.Text
+                                                  }).ToList(), "", new { @class = "form-control1" })
+                            </td>
+                            <td>Value</td>
+                            <td>
+                                @Html.TextBoxFor(m => m.SerachFieldsValue, new { @class = "form-control1" })
+                            </td>
+                            <td>
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="9"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="row">
+                    @{ if (ViewBag.Columns != null)
+                        {
+                            <div style="padding-left:50px">
+                                <b>Total Count: </b> @Model.TotalCount/@ViewBag.Sum
+                            </div>
+
+                                <div>
+                                    @grid.GetHtml(columns: ViewBag.Columns, tableStyle: "table", footerStyle: "foot")
+                                </div>
+
+
+                        }
+                    }
+
+
+                </div>
+
+                
+
+            </div>
+            <div class="panel-footer">
+                <br />
+            </div>
+        </div>
+    </div>
+                        }

@@ -1,0 +1,47 @@
+﻿
+@{
+    ViewBag.Title = "State";
+    Layout = "~/Views/Shared/_LayoutMain.cshtml";
+    int Index = 1;
+}
+<script>
+    $(".menu2").removeClass("active").removeClass("toggled");
+    $(".menu1").addClass("active").addClass("toggled");
+</script>
+@model SuperSurvey.Models.StateModels
+<div class="panel panel-success">
+    <div class="panel-heading">
+        <strong>State List</strong>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <table class="table table-bordered">
+                <tr>
+                    <th>SR.N.</th>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>TTMCSD</th>
+
+                </tr>
+
+                @foreach (var l in Model._List)
+                {
+                    <tr>
+                        <td>@Index</td>
+                        <td>@l.Code</td>
+                        <td>@l.Name</td>
+                        <td>@l.TTMCSD</td>
+
+
+                    </tr>
+                    Index += 1;
+                }
+
+
+            </table>
+        </div>
+    </div>
+    <div class="panel-footer">
+        <a href="#" class="btn btn-primary">Add New</a>
+    </div>
+</div>
